@@ -17,10 +17,7 @@ fn unique(input: impl Read) -> Result<Vec<String>, Error> {
     let mut lines = Vec::new();
 
     for line in reader.lines() {
-        let line = match line {
-            Ok(s) => s,
-            Err(e) => return Err(e),
-        };
+        let line = line?;
         let mut hasher = DefaultHasher::new();
         hasher.write(line.as_bytes());
         let hash = hasher.finish();
