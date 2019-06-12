@@ -1,11 +1,7 @@
 use std::collections::hash_map::DefaultHasher;
 use std::collections::HashSet;
 use std::hash::Hasher;
-use std::io;
-use std::io::BufRead;
-use std::io::BufReader;
-use std::io::Error;
-use std::io::Read;
+use std::io::{self, BufRead, BufReader, Error, Read};
 
 // TODO: filter iterator
 // TODO: use .map() on iterator?
