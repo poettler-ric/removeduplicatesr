@@ -5,3 +5,4 @@ authors = ["Richard Poettler <richard.poettler@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+stringreader = "*"
