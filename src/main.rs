@@ -1,4 +1,6 @@
+use std::collections::hash_map::DefaultHasher;
 use std::collections::HashSet;
+use std::hash::Hasher;
 use std::io;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -19,9 +21,11 @@ fn unique(input: impl Read) -> Result<Vec<String>, Error> {
             Ok(s) => s,
             Err(e) => return Err(e),
         };
-        if !seen.contains(&line) {
-            // FIXME: remove clone
-            seen.insert(line.clone());
+        let mut hasher = DefaultHasher::new();
+        hasher.write(line.as_bytes());
+        let hash = hasher.finish();
+        if !seen.contains(&hash) {
+            seen.insert(hash);
             lines.push(line);
         }
     }
