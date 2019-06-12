@@ -18,9 +18,11 @@ fn unique(input: impl Read) -> Result<Vec<String>, Error> {
 
     for line in reader.lines() {
         let line = line?;
+
         let mut hasher = DefaultHasher::new();
         hasher.write(line.as_bytes());
         let hash = hasher.finish();
+
         if !seen.contains(&hash) {
             seen.insert(hash);
             lines.push(line);
