@@ -28,9 +28,12 @@ fn unique(input: impl Read) -> Result<Vec<String>, Error> {
     Ok(lines)
 }
 
-fn main() -> Result<(), Error> {
-    for line in unique(io::stdin())? {
+fn main() {
+    let lines = match unique(io::stdin()) {
+        Ok(v) => v,
+        Err(e) => panic!("error while reading input: {:?}", e),
+    };
+    for line in lines {
         println!("{}", line);
     }
-    Ok(())
 }
