@@ -3,28 +3,33 @@ use std::collections::HashSet;
 use std::hash::Hasher;
 use std::io::{self, BufRead, BufReader, Error, Read};
 
-// TODO: filter iterator
-// TODO: use .map() on iterator?
-// TODO: use .dedup() on a vector? itertools?
+fn hash_string(s: &str) -> u64 {
+    let mut hasher = DefaultHasher::new();
+    hasher.write(s.as_bytes());
+    hasher.finish()
+}
 
 fn unique(input: impl Read) -> Result<Vec<String>, Error> {
     let reader = BufReader::new(input);
     let mut seen = HashSet::new();
-    let mut lines = Vec::new();
 
-    for line in reader.lines() {
-        let line = line?;
+    let lines: Result<Vec<_>, _> = reader
+        .lines()
+        .filter(|x| {
+            let x = match x {
+                Ok(v) => v,
+                Err(_) => return true, // don't handle error - let collect return it
+            };
 
-        let mut hasher = DefaultHasher::new();
-        hasher.write(line.as_bytes());
-        let hash = hasher.finish();
-
-        if !seen.contains(&hash) {
+            let hash = hash_string(&x);
+            if seen.contains(&hash) {
+                return false;
+            }
             seen.insert(hash);
-            lines.push(line);
-        }
-    }
-    Ok(lines)
+            true
+        })
+        .collect();
+    lines
 }
 
 fn main() {
