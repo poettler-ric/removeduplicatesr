@@ -21,12 +21,7 @@ fn unique(input: impl Read) -> Result<Vec<String>, Error> {
                 Err(_) => return true, // don't handle error - let collect return it
             };
 
-            let hash = hash_string(&x);
-            if seen.contains(&hash) {
-                return false;
-            }
-            seen.insert(hash);
-            true
+            seen.insert(hash_string(&x))
         })
         .collect();
     lines
