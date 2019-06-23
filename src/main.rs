@@ -4,6 +4,7 @@ use std::env;
 use std::fs::File;
 use std::hash::Hasher;
 use std::io::{self, BufRead, BufReader, BufWriter, Error, Read, Write};
+use std::process;
 
 fn hash_string(s: &str) -> u64 {
     let mut hasher = DefaultHasher::new();
@@ -44,13 +45,17 @@ fn main() {
     if !files.is_empty() {
         for file in files {
             if let Err(e) = unique_file(&file) {
-                panic!("error while handling file: {}: {:?}", file, e);
+                eprintln!("error while handling file '{}': {:?}", file, e);
+                process::exit(1);
             }
         }
     } else {
         let lines = match unique(io::stdin()) {
             Ok(v) => v,
-            Err(e) => panic!("error while reading input: {:?}", e),
+            Err(e) => {
+                eprintln!("error while reading input: {:?}", e);
+                process::exit(1);
+            }
         };
         for line in lines {
             println!("{}", line);
