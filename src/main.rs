@@ -1,7 +1,9 @@
 use std::collections::hash_map::DefaultHasher;
 use std::collections::HashSet;
+use std::env;
+use std::fs::File;
 use std::hash::Hasher;
-use std::io::{self, BufRead, BufReader, Error, Read};
+use std::io::{self, BufRead, BufReader, BufWriter, Error, Read, Write};
 
 fn hash_string(s: &str) -> u64 {
     let mut hasher = DefaultHasher::new();
@@ -27,13 +29,32 @@ fn unique(input: impl Read) -> Result<Vec<String>, Error> {
     lines
 }
 
-fn main() {
-    let lines = match unique(io::stdin()) {
-        Ok(v) => v,
-        Err(e) => panic!("error while reading input: {:?}", e),
-    };
+fn unique_file(file: &str) -> Result<(), Error> {
+    let lines = unique(File::open(file)?)?;
+    let mut file = BufWriter::new(File::create(file)?);
     for line in lines {
-        println!("{}", line);
+        writeln!(file, "{}", line)?;
+    }
+    file.flush()?;
+    Ok(())
+}
+
+fn main() {
+    let files: Vec<String> = env::args().skip(1).collect();
+    if !files.is_empty() {
+        for file in files {
+            if let Err(e) = unique_file(&file) {
+                panic!("error while handling file: {}: {:?}", file, e);
+            }
+        }
+    } else {
+        let lines = match unique(io::stdin()) {
+            Ok(v) => v,
+            Err(e) => panic!("error while reading input: {:?}", e),
+        };
+        for line in lines {
+            println!("{}", line);
+        }
     }
 }
 
